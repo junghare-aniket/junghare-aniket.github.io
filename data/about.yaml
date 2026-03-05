@@ -1,9 +1,7 @@
 content: |
   I am Aniket Junghare, a PhD Research Scholar at [Indian Institute of Technology Bombay](https://www.iitb.ac.in), working in the area of Artificial Intelligence for Remote Sensing under the supervision of [Dr. Biplab Banerjee](https://biplab-banerjee.github.io).  My research focuses on developing foundation models for remote sensing, with an emphasis on self-supervised learning and multimodal representation learning for large-scale Earth observation data.
-
-  My work lies at the intersection of deep learning, computer vision, and remote sensing, where I explore how foundation models and representation learning can be leveraged to build scalable and generalizable systems for Earth observation. In particular, I focus on designing architectures and learning strategies that effectively capture spectral, spatial, and semantic information across heterogeneous sensing modalities.
   
-
+  My work lies at the intersection of deep learning, computer vision, and remote sensing, where I focus on designing architectures and learning strategies that capture spectral, spatial, and semantic information across heterogeneous sensing modalities. Through this, I aim to develop scalable and generalizable systems for large-scale Earth observation.
 
 
 
