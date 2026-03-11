@@ -24,25 +24,25 @@
       institution: Indian Institute of Technology Bombay
       year: "Jun 2023 – Oct 2024"
       description:
-        - Master’s Thesis - Self-Supervised Masked Autoencoder for Satellite Image Representation Learning.
-        - Developed enhanced masked autoencoder models for spectral–spatial representation learning.
+        - Master’s Thesis - Self-Supervised Learning for Satellite Image Representation Learning.
 
     - title: Bachelor of Technology
       institution: National Institute of Technology Tiruchirappalli
       year: "Jun 2017 – May 2021"
       description:
-        - Bachelor’s Thesis - Deep Learning for Carbon Nanotube Behavior Prediction in Hydrogen Fuel Cells.
+        - Bachelor’s Thesis - Deep Learning based Prediction of Carbon Nanotube Behavior in Hydrogen Fuel Cells.
+        
 
 - title: "[[Experience]]"
   type: time_table
   contents:
-    - title: Deep Learning Researcher
+    - title: PhD Researcher
       institution: Machine Learning and Visual Computing Lab, IIT Bombay
       year: "Oct 2024 – Present"
       description:
         - Research focuses on remote sensing foundation models, self-supervised learning, and multimodal representation learning.
 
-    - title: Deep Learning Researcher
+    - title: Open Source Researcher
       institution: Google Summer of Code – HumanAI
       year: "May 2025 – Sep 2025"
       description:
@@ -59,7 +59,7 @@
       year: "Jan 2018 – Jun 2021"
       description:
         - Developed and deployed deep learning models for industrial quality prediction.
-        - Performed extensive hyperparameter tuning, ablation studies, and deployment optimization.
+        - Performed extensive hyperparameter tuning, ablation studies, and model deployment optimization.
 
     - title: Machine Learning Intern
       institution: VEvolve Software Pvt Ltd
@@ -67,8 +67,8 @@
       description:
         - Worked on AI-based cybersecurity validation and automated vulnerability assessment.
 
-    - title: Deep Learning Researcher
-      institution: Nakshatra Lab, NIT Tiruchirappalli
+    - title: Radio Astronomy Researcher
+      institution: Nakshatra, NIT Tiruchirappalli
       year: "Jan 2018 – Jun 2021"
       description:
-        - Conducted research on deep learning models for Fast Radio Burst detection and classification.
+        - Conducted research on deep learning methods for the detection and classification of Fast Radio Bursts.
