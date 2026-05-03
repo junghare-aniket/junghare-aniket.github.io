@@ -5,6 +5,8 @@
       value: Aniket Junghare
     - name: Email
       value: aniketjunghare.iitb@gmail.com
+    - name: Research Interests
+      value: Self-Supervised Learning, Remote Sensing Foundation Models, Multimodal Representation Learning, Geospatial AI
     - name: LinkedIn
       value: https://www.linkedin.com/in/junghare-aniket/
     - name: Location
@@ -13,41 +15,49 @@
 - title: "[[Education]]"
   type: time_table
   contents:
-    - title: PhD Research Scholar
+    - title: Doctor of Philosophy (PhD)
       institution: Indian Institute of Technology Bombay
       year: "Oct 2024 – Present"
       description:
-        - Self-Supervised Learning for Visual Representation Learning and Multimodal Understanding.
-        - Research focuses on remote sensing foundation models, self-supervised learning, and multimodal representation learning.
+        - "Thesis: Self-Supervised Multimodal Representation Learning for Earth Observation"
+        - My research focuses on developing self-supervised learning frameworks for large-scale Earth observation data, leveraging satellite imagery across multiple modalities (SAR, optical, hyperspectral) to learn rich geospatial representations without labeled annotations. I explore both masked reconstruction (MAE) and latent prediction (JEPA) paradigms to advance foundation model development for Earth observation.
 
     - title: Master of Technology
       institution: Indian Institute of Technology Bombay
       year: "Jun 2023 – Oct 2024"
       description:
-        - Master’s Thesis - Self-Supervised Learning for Satellite Image Representation Learning.
+        - "Thesis: Self-Supervised Representation Learning for Earth Observation"
 
     - title: Bachelor of Technology
       institution: National Institute of Technology Tiruchirappalli
       year: "Jun 2017 – May 2021"
       description:
-        - Bachelor’s Thesis - Deep Learning based Prediction of Carbon Nanotube Behavior in Hydrogen Fuel Cells.
+        - "Thesis: Deep Learning-Based Carbon Nanotube Behavior Prediction for Hydrogen Fuel Cells"
         
 
 - title: "[[Experience]]"
   type: time_table
   contents:
-    - title: PhD Researcher
-      institution: Machine Learning and Visual Computing Lab, IIT Bombay
+    - title: Doctoral Researcher
+      institution: Vision, Multimodal AI and Geo-Intelligence Lab, IIT Bombay
       year: "Oct 2024 – Present"
       description:
-        - Research focuses on remote sensing foundation models, self-supervised learning, and multimodal representation learning.
-
-    - title: Open Source Researcher
-      institution: Google Summer of Code – HumanAI
-      year: "May 2025 – Sep 2025"
+        - Conducting research on self-supervised and multimodal representation learning for Earth observation, with focus on MAE and JEPA-based pretraining strategies for large-scale satellite imagery.
+        - Investigating cross-modal representation alignment across heterogeneous Earth observation sensors to enable generalizable geospatial foundation models.
+    
+    - title: Google Summer of Code (Open Source Contributor)
+      institution: HumanAI
+      year: "May 2026 – Present"
       description:
-        - Developed an end-to-end handwritten text recognition framework for early modern Spanish manuscripts.
-        - Implemented CLIP-based multimodal reranking for improved transcription accuracy.
+        - Designing an end-to-end document-level HTR pipeline for early modern Spanish manuscripts, integrating a vision-language model with layout analysis, line-level OCR, and context-aware correction.
+        - Developing a VLM-centric multi-model framework with parameter-efficient fine-tuning to improve robustness across diverse document layouts and handwriting styles.
+    
+    - title: Google Summer of Code (Open Source Contributor)
+      institution: HumanAI
+      year: "Jun 2025 – Sep 2025"
+      description:
+        - Designed an end-to-end HTR system for early modern Spanish manuscripts, fine-tuning TrOCR with beam search decoding and probabilistic scoring for improved transcription quality.
+        - Developed a CLIP-based multimodal reranking framework to align visual-text representations, enabling confidence-aware prediction fusion across heterogeneous handwriting styles.
 
     - title: Technical Secretary
       institution: Centre of Studies in Resources Engineering, IIT Bombay
@@ -56,19 +66,20 @@
 
     - title: Machine Learning Engineer
       institution: Smart Controls India Ltd
-      year: "Jan 2018 – Jun 2021"
+      year: "Jun 2021 – May 2023"
       description:
-        - Developed and deployed deep learning models for industrial quality prediction.
-        - Performed extensive hyperparameter tuning, ablation studies, and model deployment optimization.
+        - Developed deep learning models for automated product quality prediction, reducing manual inspection overhead.
+        - Optimized model inference pipeline, reducing computational cost and improving real-time deployment efficiency.
+        - Conducted hyperparameter tuning and ablation studies to identify optimal architectures and training strategies.
 
     - title: Machine Learning Intern
       institution: VEvolve Software Pvt Ltd
       year: "May 2020 – Aug 2020"
       description:
-        - Worked on AI-based cybersecurity validation and automated vulnerability assessment.
+        - Developed an AI-based validation framework for web portal security, automating vulnerability detection using machine learning models and designing scalable prototypes for real-time security assessment and risk mitigation.
 
-    - title: Radio Astronomy Researcher
+    - title: Core Member (Deep Learning)
       institution: Nakshatra, NIT Tiruchirappalli
       year: "Jan 2018 – Jun 2021"
       description:
-        - Conducted research on deep learning methods for the detection and classification of Fast Radio Bursts.
+        - Developed CNN-based deep learning models for real-time Fast Radio Burst (FRB) detection, classification, and characterization using large-scale radio telescope data, improving detection speed and accuracy over baselines.
