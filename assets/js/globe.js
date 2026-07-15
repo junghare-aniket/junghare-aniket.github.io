@@ -189,8 +189,60 @@
             startTime: performance.now(),
             lifetime: 3200 + Math.random() * 1600
         });
+
+        triggerParticleRipple();
     }
     setInterval(spawnArc, ARC_SPAWN_INTERVAL);
+
+    // Visual sync with the particles.js background: every new connection sends
+    // a brief brightness ripple outward through the nearby particles, so the
+    // globe reads as broadcasting into the surrounding data field.
+    const RIPPLE_RADIUS_PX = 380;
+    const RIPPLE_DURATION = 1300; // ms
+    const RIPPLE_OPACITY_BOOST = 0.6;
+    const RIPPLE_SIZE_BOOST = 2.5; // px added to particle radius at peak
+    const rippleMap = new Map(); // particle -> { falloff, startTime }
+
+    function triggerParticleRipple() {
+        const pJSDom = window.pJSDom;
+        if (!pJSDom || !pJSDom[0] || !pJSDom[0].pJS) return;
+        const pJS = pJSDom[0].pJS;
+        const cx = window.innerWidth / 2;
+        const cy = window.innerHeight / 2;
+
+        pJS.particles.array.forEach((p) => {
+            const dx = p.x - cx;
+            const dy = p.y - cy;
+            const dist = Math.sqrt(dx * dx + dy * dy);
+            if (dist > RIPPLE_RADIUS_PX) return;
+
+            // Capture each particle's true resting state exactly once, so
+            // repeated ripples never drift its baseline brightness/size up.
+            if (!p._rippleBase) {
+                p._rippleBase = { opacity: p.opacity, radius: p.radius };
+            }
+
+            rippleMap.set(p, {
+                falloff: 1 - dist / RIPPLE_RADIUS_PX, // closer to the globe = stronger pulse
+                startTime: performance.now()
+            });
+        });
+    }
+
+    function updateParticleRipples(now) {
+        rippleMap.forEach((state, p) => {
+            const t = (now - state.startTime) / RIPPLE_DURATION;
+            if (t >= 1) {
+                p.opacity = p._rippleBase.opacity;
+                p.radius = p._rippleBase.radius;
+                rippleMap.delete(p);
+                return;
+            }
+            const intensity = Math.sin(Math.PI * t) * state.falloff;
+            p.opacity = p._rippleBase.opacity + RIPPLE_OPACITY_BOOST * intensity;
+            p.radius = p._rippleBase.radius + RIPPLE_SIZE_BOOST * intensity;
+        });
+    }
 
     function updateArcs(now) {
         for (let i = activeArcs.length - 1; i >= 0; i--) {
@@ -299,6 +351,8 @@
                 : 1;
             node.scale.setScalar(scale);
         });
+
+        updateParticleRipples(now);
         renderer.render(scene, camera);
     }
     animate();
