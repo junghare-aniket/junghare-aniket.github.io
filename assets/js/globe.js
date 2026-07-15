@@ -5,12 +5,13 @@
     if (!container || typeof THREE === 'undefined') return;
 
     const ACCENT_COLOR = 0x4ec9b0;
-    const GLOBE_RADIUS = 5;
+    const GLOBE_RADIUS = 3;
 
     const scene = new THREE.Scene();
 
     const camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000);
-    camera.position.z = 13;
+    camera.position.set(0, 0, 13);
+    camera.lookAt(0, 0, 0);
 
     const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
