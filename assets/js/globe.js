@@ -261,7 +261,7 @@
         if (activeBeams.length >= MAX_BEAMS || satellites.length === 0 || nodeMeshes.length === 0) return;
 
         const sat = satellites[Math.floor(Math.random() * satellites.length)];
-        const satWorldPos = sat.satMesh.getWorldPosition(_tmpVecA).clone();
+        const satWorldPos = sat.satMesh.getWorldPosition(_tmpVecA);
 
         let nearestIndex = -1;
         let nearestDist = Infinity;
@@ -274,19 +274,16 @@
         });
         if (nearestIndex === -1) return;
 
-        const targetWorldPos = nodeMeshes[nearestIndex].getWorldPosition(_tmpVecB).clone();
-
-        const direction = new THREE.Vector3().subVectors(targetWorldPos, satWorldPos);
-        const length = direction.length();
-        const geometry = new THREE.CylinderGeometry(BEAM_RADIUS, BEAM_RADIUS, length, 6, 1, true);
+        // Unit-height cylinder: stretched via mesh.scale.y every frame in
+        // updateDownlinkBeams so it can keep tracking both moving endpoints
+        // for its whole lifetime, instead of freezing at spawn-time positions.
+        const geometry = new THREE.CylinderGeometry(BEAM_RADIUS, BEAM_RADIUS, 1, 6, 1, true);
         const material = new THREE.MeshBasicMaterial({
             color: ACCENT_COLOR,
             transparent: true,
             opacity: 0
         });
         const mesh = new THREE.Mesh(geometry, material);
-        mesh.position.copy(satWorldPos).add(targetWorldPos).multiplyScalar(0.5);
-        mesh.quaternion.setFromUnitVectors(_upAxis, direction.normalize());
         scene.add(mesh);
 
         nodeActiveCount[nearestIndex]++;
@@ -294,6 +291,8 @@
         activeBeams.push({
             mesh,
             material,
+            satMesh: sat.satMesh,
+            nodeMesh: nodeMeshes[nearestIndex],
             nodeIndex: nearestIndex,
             startTime: performance.now()
         });
@@ -312,6 +311,16 @@
                 activeBeams.splice(i, 1);
                 continue;
             }
+
+            const satWorldPos = beam.satMesh.getWorldPosition(_tmpVecA);
+            const nodeWorldPos = beam.nodeMesh.getWorldPosition(_tmpVecB);
+            const direction = new THREE.Vector3().subVectors(nodeWorldPos, satWorldPos);
+            const length = direction.length();
+
+            beam.mesh.position.copy(satWorldPos).add(nodeWorldPos).multiplyScalar(0.5);
+            beam.mesh.quaternion.setFromUnitVectors(_upAxis, direction.normalize());
+            beam.mesh.scale.set(1, length, 1);
+
             beam.material.opacity = Math.sin(Math.PI * t) * 0.95;
         }
     }
