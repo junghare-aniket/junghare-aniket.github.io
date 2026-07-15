@@ -76,7 +76,7 @@
     const coreGeometry = new THREE.SphereGeometry(GLOBE_RADIUS * 0.985, 48, 48);
     const coreMaterial = new THREE.MeshBasicMaterial({
         map: textureLoader.load('https://threejs.org/examples/textures/planets/earth_atmos_2048.jpg'),
-        color: new THREE.Color(0x3d5566) // brighter tint so the map reads more clearly under the grid
+        color: new THREE.Color(0x6d8ea3) // brighter tint so the landmass map reads clearly under the grid
     });
     globeGroup.add(new THREE.Mesh(coreGeometry, coreMaterial));
 
