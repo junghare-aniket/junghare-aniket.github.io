@@ -244,14 +244,18 @@
 
     // Satellite downlink beams: periodically a satellite sends a pulse down to the
     // nearest city node beneath it, tying the orbital layer to the ground network.
+    // Rendered as a thin cylinder (not a THREE.Line) since WebGL caps line thickness
+    // at ~1px regardless of linewidth - a real mesh is what actually stays visible.
     // Endpoints are captured in world space at the moment of creation (like the
     // arcs/ripples elsewhere) since satellites orbit independently of the globe's spin.
-    const MAX_BEAMS = 4;
-    const DOWNLINK_INTERVAL = 2200; // ms
-    const BEAM_LIFETIME = 1100; // ms
+    const MAX_BEAMS = 5;
+    const DOWNLINK_INTERVAL = 900; // ms - shorter than BEAM_LIFETIME so beams overlap, never a dead gap
+    const BEAM_LIFETIME = 1400; // ms
+    const BEAM_RADIUS = 0.018;
     const activeBeams = [];
     const _tmpVecA = new THREE.Vector3();
     const _tmpVecB = new THREE.Vector3();
+    const _upAxis = new THREE.Vector3(0, 1, 0);
 
     function spawnDownlinkBeam() {
         if (activeBeams.length >= MAX_BEAMS || satellites.length === 0 || nodeMeshes.length === 0) return;
@@ -272,19 +276,23 @@
 
         const targetWorldPos = nodeMeshes[nearestIndex].getWorldPosition(_tmpVecB).clone();
 
-        const geometry = new THREE.BufferGeometry().setFromPoints([satWorldPos, targetWorldPos]);
-        const material = new THREE.LineBasicMaterial({
+        const direction = new THREE.Vector3().subVectors(targetWorldPos, satWorldPos);
+        const length = direction.length();
+        const geometry = new THREE.CylinderGeometry(BEAM_RADIUS, BEAM_RADIUS, length, 6, 1, true);
+        const material = new THREE.MeshBasicMaterial({
             color: ACCENT_COLOR,
             transparent: true,
             opacity: 0
         });
-        const line = new THREE.Line(geometry, material);
-        scene.add(line);
+        const mesh = new THREE.Mesh(geometry, material);
+        mesh.position.copy(satWorldPos).add(targetWorldPos).multiplyScalar(0.5);
+        mesh.quaternion.setFromUnitVectors(_upAxis, direction.normalize());
+        scene.add(mesh);
 
         nodeActiveCount[nearestIndex]++;
 
         activeBeams.push({
-            line,
+            mesh,
             material,
             nodeIndex: nearestIndex,
             startTime: performance.now()
@@ -297,14 +305,14 @@
             const beam = activeBeams[i];
             const t = (now - beam.startTime) / BEAM_LIFETIME;
             if (t >= 1) {
-                scene.remove(beam.line);
-                beam.line.geometry.dispose();
+                scene.remove(beam.mesh);
+                beam.mesh.geometry.dispose();
                 beam.material.dispose();
                 nodeActiveCount[beam.nodeIndex]--;
                 activeBeams.splice(i, 1);
                 continue;
             }
-            beam.material.opacity = Math.sin(Math.PI * t) * 0.8;
+            beam.material.opacity = Math.sin(Math.PI * t) * 0.95;
         }
     }
 
