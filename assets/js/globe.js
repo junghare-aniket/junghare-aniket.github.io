@@ -26,7 +26,22 @@
         [-33.9249, 18.4241],  // Cape Town
         [43.6532, -79.3832],  // Toronto
         [25.2048, 55.2708],   // Dubai
-        [52.5200, 13.4050]    // Berlin
+        [52.5200, 13.4050],   // Berlin
+        [28.6139, 77.2090],   // Delhi
+        [31.2304, 121.4737],  // Shanghai
+        [22.3193, 114.1694],  // Hong Kong
+        [37.5665, 126.9780],  // Seoul
+        [-6.2088, 106.8456],  // Jakarta
+        [13.7563, 100.5018],  // Bangkok
+        [19.4326, -99.1332],  // Mexico City
+        [-34.6037, -58.3816], // Buenos Aires
+        [6.5244, 3.3792],     // Lagos
+        [-1.2921, 36.8219],   // Nairobi
+        [41.0082, 28.9784],   // Istanbul
+        [48.8566, 2.3522],    // Paris
+        [40.4168, -3.7038],   // Madrid
+        [41.9028, 12.4964],   // Rome
+        [34.0522, -118.2437]  // Los Angeles
     ];
 
     function latLonToVector3(lat, lon, radius) {
@@ -54,18 +69,24 @@
     const globeGroup = new THREE.Group();
     scene.add(globeGroup);
 
-    // Solid dark core so nodes/arcs read clearly against it (no lighting needed - unlit material)
+    // Solid dark core with a faint world-map overlay so nodes/arcs read clearly against it
+    const textureLoader = new THREE.TextureLoader();
+    textureLoader.setCrossOrigin('anonymous');
+
     const coreGeometry = new THREE.SphereGeometry(GLOBE_RADIUS * 0.985, 48, 48);
-    const coreMaterial = new THREE.MeshBasicMaterial({ color: 0x0a0f14 });
+    const coreMaterial = new THREE.MeshBasicMaterial({
+        map: textureLoader.load('https://threejs.org/examples/textures/planets/earth_atmos_2048.jpg'),
+        color: new THREE.Color(0x24343f) // darkens/tints the map so it reads as a faint overlay, not a photo
+    });
     globeGroup.add(new THREE.Mesh(coreGeometry, coreMaterial));
 
-    // Teal wireframe grid - the primary "surface" look
+    // Teal wireframe grid - dimmed down so it reads as a subtle overlay rather than the main surface
     const wireGeometry = new THREE.SphereGeometry(GLOBE_RADIUS, 24, 24);
     const wireMaterial = new THREE.MeshBasicMaterial({
         color: ACCENT_COLOR,
         wireframe: true,
         transparent: true,
-        opacity: 0.25
+        opacity: 0.1
     });
     globeGroup.add(new THREE.Mesh(wireGeometry, wireMaterial));
 
