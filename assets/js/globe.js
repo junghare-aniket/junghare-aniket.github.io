@@ -201,11 +201,76 @@
     }
     window.addEventListener('resize', onResize);
 
+    // Drag-to-rotate: click/touch and drag spins the globe manually; releasing
+    // lets it drift to a stop and then ease back into the slow auto-rotation.
+    const AUTO_ROTATE_SPEED = 0.0018;
+    const DRAG_SENSITIVITY = 0.005;
+    const VELOCITY_DAMPING = 0.94;
+    const MAX_TILT = Math.PI / 2 - 0.05;
+
+    let isDragging = false;
+    let lastPointerX = 0;
+    let lastPointerY = 0;
+    let velocityX = 0;
+    let dragEndTime = 0;
+
+    function pointerDown(x, y) {
+        isDragging = true;
+        lastPointerX = x;
+        lastPointerY = y;
+        velocityX = 0;
+        container.classList.add('dragging');
+    }
+
+    function pointerMove(x, y) {
+        if (!isDragging) return;
+        const deltaX = x - lastPointerX;
+        const deltaY = y - lastPointerY;
+
+        globeGroup.rotation.y += deltaX * DRAG_SENSITIVITY;
+        globeGroup.rotation.x = Math.max(
+            -MAX_TILT,
+            Math.min(MAX_TILT, globeGroup.rotation.x + deltaY * DRAG_SENSITIVITY)
+        );
+
+        velocityX = deltaX * DRAG_SENSITIVITY;
+        lastPointerX = x;
+        lastPointerY = y;
+    }
+
+    function pointerUp() {
+        if (!isDragging) return;
+        isDragging = false;
+        dragEndTime = performance.now();
+        container.classList.remove('dragging');
+    }
+
+    container.addEventListener('mousedown', (e) => pointerDown(e.clientX, e.clientY));
+    window.addEventListener('mousemove', (e) => pointerMove(e.clientX, e.clientY));
+    window.addEventListener('mouseup', pointerUp);
+
+    container.addEventListener('touchstart', (e) => {
+        const t = e.touches[0];
+        pointerDown(t.clientX, t.clientY);
+    }, { passive: true });
+    window.addEventListener('touchmove', (e) => {
+        const t = e.touches[0];
+        pointerMove(t.clientX, t.clientY);
+    }, { passive: true });
+    window.addEventListener('touchend', pointerUp);
+
     function animate() {
         requestAnimationFrame(animate);
         const now = performance.now();
 
-        globeGroup.rotation.y += 0.0018;
+        if (isDragging) {
+            // rotation already applied directly in pointerMove
+        } else if (Math.abs(velocityX) > 0.00005) {
+            globeGroup.rotation.y += velocityX;
+            velocityX *= VELOCITY_DAMPING;
+        } else if (now - dragEndTime > 600) {
+            globeGroup.rotation.y += AUTO_ROTATE_SPEED;
+        }
 
         nodeMeshes.forEach(node => {
             const scale = 1 + 0.35 * Math.sin(now * 0.0025 + node.userData.pulseOffset);
