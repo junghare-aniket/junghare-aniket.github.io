@@ -242,87 +242,64 @@
         return node;
     });
 
-    // Satellite downlink beams: periodically a satellite sends a pulse down to the
-    // nearest city node beneath it, tying the orbital layer to the ground network.
-    // Rendered as a thin cylinder (not a THREE.Line) since WebGL caps line thickness
-    // at ~1px regardless of linewidth - a real mesh is what actually stays visible.
-    // Endpoints are captured in world space at the moment of creation (like the
-    // arcs/ripples elsewhere) since satellites orbit independently of the globe's spin.
-    const MAX_BEAMS = 5;
-    const DOWNLINK_INTERVAL = 900; // ms - shorter than BEAM_LIFETIME so beams overlap, never a dead gap
-    const BEAM_LIFETIME = 1400; // ms
+    // Satellite downlink beams: each satellite keeps a permanent live connection to
+    // whichever city node is currently nearest beneath it, tying the orbital layer
+    // to the ground network. Rendered as a thin cylinder (not a THREE.Line) since
+    // WebGL caps line thickness at ~1px regardless of linewidth - a real mesh is
+    // what actually stays visible. Re-targets automatically as the satellite orbits
+    // and the globe rotates, so the connection never has to restart from scratch.
     const BEAM_RADIUS = 0.018;
-    const activeBeams = [];
     const _tmpVecA = new THREE.Vector3();
     const _tmpVecB = new THREE.Vector3();
     const _upAxis = new THREE.Vector3(0, 1, 0);
 
-    function spawnDownlinkBeam() {
-        if (activeBeams.length >= MAX_BEAMS || satellites.length === 0 || nodeMeshes.length === 0) return;
-
-        const sat = satellites[Math.floor(Math.random() * satellites.length)];
-        const satWorldPos = sat.satMesh.getWorldPosition(_tmpVecA);
-
-        let nearestIndex = -1;
-        let nearestDist = Infinity;
-        nodeMeshes.forEach((node, i) => {
-            const dist = satWorldPos.distanceTo(node.getWorldPosition(_tmpVecB));
-            if (dist < nearestDist) {
-                nearestDist = dist;
-                nearestIndex = i;
-            }
-        });
-        if (nearestIndex === -1) return;
-
+    satellites.forEach((sat) => {
         // Unit-height cylinder: stretched via mesh.scale.y every frame in
-        // updateDownlinkBeams so it can keep tracking both moving endpoints
-        // for its whole lifetime, instead of freezing at spawn-time positions.
+        // updateDownlinkBeams so it can keep tracking both moving endpoints.
         const geometry = new THREE.CylinderGeometry(BEAM_RADIUS, BEAM_RADIUS, 1, 6, 1, true);
         const material = new THREE.MeshBasicMaterial({
             color: ACCENT_COLOR,
             transparent: true,
-            opacity: 0
+            opacity: 0.55
         });
         const mesh = new THREE.Mesh(geometry, material);
         scene.add(mesh);
 
-        nodeActiveCount[nearestIndex]++;
+        sat.beamMesh = mesh;
+        sat.beamNodeIndex = -1; // currently-connected node, updated every frame
+    });
 
-        activeBeams.push({
-            mesh,
-            material,
-            satMesh: sat.satMesh,
-            nodeMesh: nodeMeshes[nearestIndex],
-            nodeIndex: nearestIndex,
-            startTime: performance.now()
-        });
-    }
-    setInterval(spawnDownlinkBeam, DOWNLINK_INTERVAL);
+    function updateDownlinkBeams() {
+        satellites.forEach((sat) => {
+            if (nodeMeshes.length === 0) return;
 
-    function updateDownlinkBeams(now) {
-        for (let i = activeBeams.length - 1; i >= 0; i--) {
-            const beam = activeBeams[i];
-            const t = (now - beam.startTime) / BEAM_LIFETIME;
-            if (t >= 1) {
-                scene.remove(beam.mesh);
-                beam.mesh.geometry.dispose();
-                beam.material.dispose();
-                nodeActiveCount[beam.nodeIndex]--;
-                activeBeams.splice(i, 1);
-                continue;
+            const satWorldPos = sat.satMesh.getWorldPosition(_tmpVecA);
+
+            let nearestIndex = -1;
+            let nearestDist = Infinity;
+            nodeMeshes.forEach((node, i) => {
+                const dist = satWorldPos.distanceTo(node.getWorldPosition(_tmpVecB));
+                if (dist < nearestDist) {
+                    nearestDist = dist;
+                    nearestIndex = i;
+                }
+            });
+            if (nearestIndex === -1) return;
+
+            if (nearestIndex !== sat.beamNodeIndex) {
+                if (sat.beamNodeIndex !== -1) nodeActiveCount[sat.beamNodeIndex]--;
+                nodeActiveCount[nearestIndex]++;
+                sat.beamNodeIndex = nearestIndex;
             }
 
-            const satWorldPos = beam.satMesh.getWorldPosition(_tmpVecA);
-            const nodeWorldPos = beam.nodeMesh.getWorldPosition(_tmpVecB);
+            const nodeWorldPos = nodeMeshes[nearestIndex].getWorldPosition(_tmpVecB);
             const direction = new THREE.Vector3().subVectors(nodeWorldPos, satWorldPos);
             const length = direction.length();
 
-            beam.mesh.position.copy(satWorldPos).add(nodeWorldPos).multiplyScalar(0.5);
-            beam.mesh.quaternion.setFromUnitVectors(_upAxis, direction.normalize());
-            beam.mesh.scale.set(1, length, 1);
-
-            beam.material.opacity = Math.sin(Math.PI * t) * 0.95;
-        }
+            sat.beamMesh.position.copy(satWorldPos).add(nodeWorldPos).multiplyScalar(0.5);
+            sat.beamMesh.quaternion.setFromUnitVectors(_upAxis, direction.normalize());
+            sat.beamMesh.scale.set(1, length, 1);
+        });
     }
 
     // Pulsing arcs animated between random node pairs
@@ -528,7 +505,7 @@
         });
 
         updateArcs(now); // updates nodeActiveCount before nodes read it below
-        updateDownlinkBeams(now); // also updates nodeActiveCount before nodes read it below
+        updateDownlinkBeams(); // also updates nodeActiveCount before nodes read it below
 
         nodeMeshes.forEach((node, i) => {
             const isActive = nodeActiveCount[i] > 0;
