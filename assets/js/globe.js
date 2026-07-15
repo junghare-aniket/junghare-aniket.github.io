@@ -168,6 +168,62 @@
     });
     globeGroup.add(new THREE.Mesh(atmosphereGeometry, atmosphereMaterial));
 
+    // Orbiting satellites - added to the scene (not globeGroup) so they keep orbiting
+    // independently of the globe's own spin, like real satellites over a rotating Earth.
+    const SATELLITE_COUNT = 6;
+    const SATELLITE_ORBIT_RADIUS = GLOBE_RADIUS * 1.4;
+    const satellites = [];
+
+    for (let s = 0; s < SATELLITE_COUNT; s++) {
+        // Static pivot that fixes this satellite's orbital plane (random tilt + orientation)
+        const planePivot = new THREE.Object3D();
+        planePivot.rotation.x = (Math.random() - 0.5) * Math.PI;
+        planePivot.rotation.z = Math.random() * Math.PI * 2;
+        scene.add(planePivot);
+
+        // Faint static ring tracing the orbit path
+        const ringPoints = [];
+        for (let k = 0; k <= 64; k++) {
+            const a = (k / 64) * Math.PI * 2;
+            ringPoints.push(new THREE.Vector3(
+                SATELLITE_ORBIT_RADIUS * Math.cos(a),
+                0,
+                SATELLITE_ORBIT_RADIUS * Math.sin(a)
+            ));
+        }
+        const ringMaterial = new THREE.LineBasicMaterial({
+            color: ACCENT_COLOR,
+            transparent: true,
+            opacity: 0.1
+        });
+        planePivot.add(new THREE.LineLoop(new THREE.BufferGeometry().setFromPoints(ringPoints), ringMaterial));
+
+        // Rotating pivot that carries the satellite around the (fixed) orbital plane
+        const motionPivot = new THREE.Object3D();
+        motionPivot.rotation.y = Math.random() * Math.PI * 2;
+        planePivot.add(motionPivot);
+
+        const satMaterial = new THREE.MeshBasicMaterial({ color: ACCENT_COLOR });
+        const satMesh = new THREE.Mesh(new THREE.SphereGeometry(0.035, 8, 8), satMaterial);
+        satMesh.position.set(SATELLITE_ORBIT_RADIUS, 0, 0);
+        motionPivot.add(satMesh);
+
+        // Small glow halo so satellites read as distinct, always-on points of light
+        const glowMaterial = new THREE.MeshBasicMaterial({
+            color: ACCENT_COLOR,
+            transparent: true,
+            opacity: 0.35,
+            blending: THREE.AdditiveBlending
+        });
+        const glowMesh = new THREE.Mesh(new THREE.SphereGeometry(0.075, 8, 8), glowMaterial);
+        satMesh.add(glowMesh);
+
+        satellites.push({
+            motionPivot,
+            speed: (0.0025 + Math.random() * 0.0035) * (Math.random() < 0.5 ? 1 : -1)
+        });
+    }
+
     // City nodes - dim/small by default, only lighting up while an arc is connected to them
     const nodePositions = NODE_COORDS.map(([lat, lon]) => latLonToVector3(lat, lon, GLOBE_RADIUS * 1.01));
     const nodeActiveCount = new Array(nodePositions.length).fill(0);
@@ -382,6 +438,10 @@
         } else if (now - dragEndTime > 600) {
             globeGroup.rotation.y += AUTO_ROTATE_SPEED;
         }
+
+        satellites.forEach((sat) => {
+            sat.motionPivot.rotation.y += sat.speed;
+        });
 
         updateArcs(now); // updates nodeActiveCount before nodes read it below
 
