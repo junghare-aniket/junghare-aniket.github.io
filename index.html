@@ -8,11 +8,14 @@
     <link rel="stylesheet" href="assets/css/style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/js-yaml@4.1.0/dist/js-yaml.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/build/three.min.js"></script>
 </head>
 
 <body>
     <!-- Particles.js Background Animation -->
     <div id="particles-js"></div>
+    <!-- Rotating Globe Background -->
+    <div id="globe-container"></div>
 
     <nav class="navbar">
         <div class="nav-container">
@@ -69,6 +72,7 @@
     <!-- Particles.js Animation -->
     <script src="assets/js/particles.js"></script>
     <script src="assets/js/particles-config.js"></script>
+    <script src="assets/js/globe.js"></script>
     <script>
         document.getElementById('current-year').textContent = new Date().getFullYear();
     </script>
