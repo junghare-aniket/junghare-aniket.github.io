@@ -7,8 +7,8 @@
 
     const ACCENT_COLOR = 0x4ec9b0;
     const GLOBE_RADIUS = 3;
-    const MAX_ARCS = 6;
-    const ARC_SPAWN_INTERVAL = 900; // ms
+    const MAX_ARCS = 12;
+    const ARC_SPAWN_INTERVAL = 450; // ms
 
     // Roughly-global spread of "city" nodes, as [lat, lon]
     const NODE_COORDS = [
@@ -76,19 +76,48 @@
     const coreGeometry = new THREE.SphereGeometry(GLOBE_RADIUS * 0.985, 48, 48);
     const coreMaterial = new THREE.MeshBasicMaterial({
         map: textureLoader.load('https://threejs.org/examples/textures/planets/earth_atmos_2048.jpg'),
-        color: new THREE.Color(0x24343f) // darkens/tints the map so it reads as a faint overlay, not a photo
+        color: new THREE.Color(0x3d5566) // brighter tint so the map reads more clearly under the grid
     });
     globeGroup.add(new THREE.Mesh(coreGeometry, coreMaterial));
 
-    // Teal wireframe grid - dimmed down so it reads as a subtle overlay rather than the main surface
-    const wireGeometry = new THREE.SphereGeometry(GLOBE_RADIUS, 24, 24);
-    const wireMaterial = new THREE.MeshBasicMaterial({
+    // Teal latitude/longitude grid - built from clean rings (not a triangulated sphere wireframe)
+    // so there are no diagonal lines, just horizontal latitude circles and vertical longitude circles
+    const gridMaterial = new THREE.LineBasicMaterial({
         color: ACCENT_COLOR,
-        wireframe: true,
         transparent: true,
-        opacity: 0.1
+        opacity: 0.12
     });
-    globeGroup.add(new THREE.Mesh(wireGeometry, wireMaterial));
+    const gridRadius = GLOBE_RADIUS * 1.002;
+
+    // Latitude rings (horizontal), skipping the poles
+    for (let lat = -80; lat <= 80; lat += 20) {
+        const latRad = lat * Math.PI / 180;
+        const ringRadius = gridRadius * Math.cos(latRad);
+        const y = gridRadius * Math.sin(latRad);
+        const points = [];
+        for (let i = 0; i <= 64; i++) {
+            const theta = (i / 64) * Math.PI * 2;
+            points.push(new THREE.Vector3(ringRadius * Math.cos(theta), y, ringRadius * Math.sin(theta)));
+        }
+        const ring = new THREE.LineLoop(new THREE.BufferGeometry().setFromPoints(points), gridMaterial);
+        globeGroup.add(ring);
+    }
+
+    // Longitude lines (vertical, pole-to-pole great circles)
+    for (let lon = 0; lon < 360; lon += 30) {
+        const lonRad = lon * Math.PI / 180;
+        const points = [];
+        for (let i = 0; i <= 64; i++) {
+            const phi = (i / 64) * Math.PI - Math.PI / 2;
+            points.push(new THREE.Vector3(
+                gridRadius * Math.cos(phi) * Math.cos(lonRad),
+                gridRadius * Math.sin(phi),
+                gridRadius * Math.cos(phi) * Math.sin(lonRad)
+            ));
+        }
+        const line = new THREE.Line(new THREE.BufferGeometry().setFromPoints(points), gridMaterial);
+        globeGroup.add(line);
+    }
 
     // Subtle outer atmosphere glow matching the site's accent color
     const atmosphereGeometry = new THREE.SphereGeometry(GLOBE_RADIUS * 1.05, 48, 48);
