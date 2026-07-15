@@ -29,10 +29,9 @@ html {
     top: 0;
     left: 0;
     z-index: -1;
-    cursor: grab;
 }
 
-#globe-container.dragging {
+body.dragging-globe {
     cursor: grabbing;
 }
 
@@ -47,6 +46,7 @@ body {
     background-color: transparent !important;
     min-height: 100vh;
     animation: fadeIn 2.5s ease-in-out;
+    cursor: grab;
 }
 
 /* Page Transition Animations */
