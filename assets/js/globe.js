@@ -194,17 +194,22 @@
     }
     setInterval(spawnArc, ARC_SPAWN_INTERVAL);
 
-    // Visual sync with the particles.js background: every new connection sends
+    // Visual sync with the particles.js background: every so often a connection sends
     // a brief brightness ripple outward through the nearby particles, so the
     // globe reads as broadcasting into the surrounding data field.
     const RIPPLE_RADIUS_PX = 450;
     const RIPPLE_DURATION = 1500; // ms
-    const RIPPLE_OPACITY_BOOST = 0.9;
-    const RIPPLE_SIZE_BOOST = 7; // px added to particle radius at peak - the main visible driver,
-    // since opacity mostly just saturates to fully-opaque on top of the already-0.5 base
+    const RIPPLE_OPACITY_BOOST = 0.35;
+    const RIPPLE_SIZE_BOOST = 3; // px added to particle radius at peak
+    const RIPPLE_COOLDOWN = 2500; // ms - throttles how often a ripple can fire, independent of arc spawn rate
     const rippleMap = new Map(); // particle -> { falloff, startTime }
+    let lastRippleTime = 0;
 
     function triggerParticleRipple() {
+        const now = performance.now();
+        if (now - lastRippleTime < RIPPLE_COOLDOWN) return;
+        lastRippleTime = now;
+
         const pJSDom = window.pJSDom;
         if (!pJSDom || !pJSDom[0] || !pJSDom[0].pJS) return;
         const pJS = pJSDom[0].pJS;
