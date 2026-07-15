@@ -220,6 +220,7 @@
 
         satellites.push({
             motionPivot,
+            satMesh,
             speed: (0.0025 + Math.random() * 0.0035) * (Math.random() < 0.5 ? 1 : -1)
         });
     }
@@ -240,6 +241,72 @@
         globeGroup.add(node);
         return node;
     });
+
+    // Satellite downlink beams: periodically a satellite sends a pulse down to the
+    // nearest city node beneath it, tying the orbital layer to the ground network.
+    // Endpoints are captured in world space at the moment of creation (like the
+    // arcs/ripples elsewhere) since satellites orbit independently of the globe's spin.
+    const MAX_BEAMS = 4;
+    const DOWNLINK_INTERVAL = 2200; // ms
+    const BEAM_LIFETIME = 1100; // ms
+    const activeBeams = [];
+    const _tmpVecA = new THREE.Vector3();
+    const _tmpVecB = new THREE.Vector3();
+
+    function spawnDownlinkBeam() {
+        if (activeBeams.length >= MAX_BEAMS || satellites.length === 0 || nodeMeshes.length === 0) return;
+
+        const sat = satellites[Math.floor(Math.random() * satellites.length)];
+        const satWorldPos = sat.satMesh.getWorldPosition(_tmpVecA).clone();
+
+        let nearestIndex = -1;
+        let nearestDist = Infinity;
+        nodeMeshes.forEach((node, i) => {
+            const dist = satWorldPos.distanceTo(node.getWorldPosition(_tmpVecB));
+            if (dist < nearestDist) {
+                nearestDist = dist;
+                nearestIndex = i;
+            }
+        });
+        if (nearestIndex === -1) return;
+
+        const targetWorldPos = nodeMeshes[nearestIndex].getWorldPosition(_tmpVecB).clone();
+
+        const geometry = new THREE.BufferGeometry().setFromPoints([satWorldPos, targetWorldPos]);
+        const material = new THREE.LineBasicMaterial({
+            color: ACCENT_COLOR,
+            transparent: true,
+            opacity: 0
+        });
+        const line = new THREE.Line(geometry, material);
+        scene.add(line);
+
+        nodeActiveCount[nearestIndex]++;
+
+        activeBeams.push({
+            line,
+            material,
+            nodeIndex: nearestIndex,
+            startTime: performance.now()
+        });
+    }
+    setInterval(spawnDownlinkBeam, DOWNLINK_INTERVAL);
+
+    function updateDownlinkBeams(now) {
+        for (let i = activeBeams.length - 1; i >= 0; i--) {
+            const beam = activeBeams[i];
+            const t = (now - beam.startTime) / BEAM_LIFETIME;
+            if (t >= 1) {
+                scene.remove(beam.line);
+                beam.line.geometry.dispose();
+                beam.material.dispose();
+                nodeActiveCount[beam.nodeIndex]--;
+                activeBeams.splice(i, 1);
+                continue;
+            }
+            beam.material.opacity = Math.sin(Math.PI * t) * 0.8;
+        }
+    }
 
     // Pulsing arcs animated between random node pairs
     const activeArcs = [];
@@ -444,6 +511,7 @@
         });
 
         updateArcs(now); // updates nodeActiveCount before nodes read it below
+        updateDownlinkBeams(now); // also updates nodeActiveCount before nodes read it below
 
         nodeMeshes.forEach((node, i) => {
             const isActive = nodeActiveCount[i] > 0;
