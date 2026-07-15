@@ -219,7 +219,7 @@
         lastPointerX = x;
         lastPointerY = y;
         velocityX = 0;
-        container.classList.add('dragging');
+        document.body.classList.add('dragging-globe');
     }
 
     function pointerMove(x, y) {
@@ -242,22 +242,22 @@
         if (!isDragging) return;
         isDragging = false;
         dragEndTime = performance.now();
-        container.classList.remove('dragging');
+        document.body.classList.remove('dragging-globe');
     }
 
-    container.addEventListener('mousedown', (e) => pointerDown(e.clientX, e.clientY));
+    // Listen on window (not the globe canvas) since the visible globe sits
+    // behind the page content in stacking order - the content's boxes would
+    // otherwise swallow every mousedown before it reaches the canvas.
+    // Real links/buttons are excluded so clicks and navigation still work.
+    const INTERACTIVE_SELECTOR = 'a, button, input, textarea, select';
+
+    window.addEventListener('mousedown', (e) => {
+        if (e.target.closest(INTERACTIVE_SELECTOR)) return;
+        e.preventDefault(); // avoid dragging also selecting page text
+        pointerDown(e.clientX, e.clientY);
+    });
     window.addEventListener('mousemove', (e) => pointerMove(e.clientX, e.clientY));
     window.addEventListener('mouseup', pointerUp);
-
-    container.addEventListener('touchstart', (e) => {
-        const t = e.touches[0];
-        pointerDown(t.clientX, t.clientY);
-    }, { passive: true });
-    window.addEventListener('touchmove', (e) => {
-        const t = e.touches[0];
-        pointerMove(t.clientX, t.clientY);
-    }, { passive: true });
-    window.addEventListener('touchend', pointerUp);
 
     function animate() {
         requestAnimationFrame(animate);
