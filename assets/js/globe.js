@@ -197,10 +197,11 @@
     // Visual sync with the particles.js background: every new connection sends
     // a brief brightness ripple outward through the nearby particles, so the
     // globe reads as broadcasting into the surrounding data field.
-    const RIPPLE_RADIUS_PX = 380;
-    const RIPPLE_DURATION = 1300; // ms
-    const RIPPLE_OPACITY_BOOST = 0.6;
-    const RIPPLE_SIZE_BOOST = 2.5; // px added to particle radius at peak
+    const RIPPLE_RADIUS_PX = 450;
+    const RIPPLE_DURATION = 1500; // ms
+    const RIPPLE_OPACITY_BOOST = 0.9;
+    const RIPPLE_SIZE_BOOST = 7; // px added to particle radius at peak - the main visible driver,
+    // since opacity mostly just saturates to fully-opaque on top of the already-0.5 base
     const rippleMap = new Map(); // particle -> { falloff, startTime }
 
     function triggerParticleRipple() {
@@ -223,7 +224,9 @@
             }
 
             rippleMap.set(p, {
-                falloff: 1 - dist / RIPPLE_RADIUS_PX, // closer to the globe = stronger pulse
+                // sqrt curve keeps the falloff stronger across most of the radius,
+                // instead of dropping off sharply right past the center
+                falloff: Math.sqrt(1 - dist / RIPPLE_RADIUS_PX),
                 startTime: performance.now()
             });
         });
