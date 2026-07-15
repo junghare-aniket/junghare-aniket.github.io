@@ -18,22 +18,26 @@
     renderer.setSize(window.innerWidth, window.innerHeight);
     container.appendChild(renderer.domElement);
 
-    // Lighting
-    scene.add(new THREE.AmbientLight(0xffffff, 0.5));
-    const sunLight = new THREE.DirectionalLight(0xffffff, 1.1);
+    // Lighting - kept moody/dim so the emissive city lights and teal grid stand out
+    scene.add(new THREE.AmbientLight(0xffffff, 0.35));
+    const sunLight = new THREE.DirectionalLight(0xffffff, 0.8);
     sunLight.position.set(5, 3, 5);
     scene.add(sunLight);
 
-    // Earth sphere
+    // Earth sphere - dark "geo-intelligence" theme: dark-tinted continents + glowing teal city lights
     const textureLoader = new THREE.TextureLoader();
     textureLoader.setCrossOrigin('anonymous');
 
     const earthGeometry = new THREE.SphereGeometry(GLOBE_RADIUS, 64, 64);
     const earthMaterial = new THREE.MeshPhongMaterial({
         map: textureLoader.load('https://threejs.org/examples/textures/planets/earth_atmos_2048.jpg'),
+        color: new THREE.Color(0x24343f), // darkens/tints the base map toward the theme's dark-teal palette
         specularMap: textureLoader.load('https://threejs.org/examples/textures/planets/earth_specular_2048.jpg'),
-        specular: new THREE.Color(0x333333),
-        shininess: 6
+        specular: new THREE.Color(0x111111),
+        shininess: 4,
+        emissiveMap: textureLoader.load('https://threejs.org/examples/textures/planets/earth_lights_2048.png'),
+        emissive: new THREE.Color(ACCENT_COLOR),
+        emissiveIntensity: 1.4
     });
     const earth = new THREE.Mesh(earthGeometry, earthMaterial);
     scene.add(earth);
@@ -56,7 +60,7 @@
         color: ACCENT_COLOR,
         wireframe: true,
         transparent: true,
-        opacity: 0.08
+        opacity: 0.14
     });
     const wireSphere = new THREE.Mesh(wireGeometry, wireMaterial);
     scene.add(wireSphere);
