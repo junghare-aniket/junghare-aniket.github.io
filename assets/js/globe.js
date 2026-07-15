@@ -43,7 +43,43 @@
         [48.8566, 2.3522],    // Paris
         [40.4168, -3.7038],   // Madrid
         [41.9028, 12.4964],   // Rome
-        [34.0522, -118.2437]  // Los Angeles
+        [34.0522, -118.2437], // Los Angeles
+
+        // Additional nodes for fuller coverage: Arctic, Pacific, Antarctica-adjacent,
+        // Central Asia, and deeper Africa/South America spread
+        [64.1466, -21.9426],  // Reykjavik
+        [61.2181, -149.9003], // Anchorage
+        [64.1836, -51.7214],  // Nuuk
+        [69.3558, 88.1893],   // Norilsk
+        [60.1699, 24.9384],   // Helsinki
+        [59.3293, 18.0686],   // Stockholm
+        [37.9838, 23.7275],   // Athens
+        [35.6892, 51.3890],   // Tehran
+        [24.7136, 46.6753],   // Riyadh
+        [33.3152, 44.3661],   // Baghdad
+        [24.8607, 67.0011],   // Karachi
+        [43.2220, 76.8512],   // Almaty
+        [41.2995, 69.2401],   // Tashkent
+        [47.8864, 106.9057],  // Ulaanbaatar
+        [14.5995, 120.9842],  // Manila
+        [10.8231, 106.6297],  // Ho Chi Minh City
+        [-31.9505, 115.8605], // Perth
+        [-36.8485, 174.7633], // Auckland
+        [21.3069, -157.8583], // Honolulu
+        [-18.1416, 178.4419], // Suva
+        [9.0320, 38.7469],    // Addis Ababa
+        [-4.4419, 15.2663],   // Kinshasa
+        [5.6037, -0.1870],    // Accra
+        [-26.2041, 28.0473],  // Johannesburg
+        [-6.7924, 39.2083],   // Dar es Salaam
+        [33.5731, -7.5898],   // Casablanca
+        [4.7110, -74.0721],   // Bogota
+        [-12.0464, -77.0428], // Lima
+        [-33.4489, -70.6693], // Santiago
+        [49.2827, -123.1207], // Vancouver
+        [-54.8019, -68.3030], // Ushuaia
+        [-53.1638, -70.9171], // Punta Arenas
+        [-77.8419, 166.6863]  // McMurdo Station, Antarctica
     ];
 
     function latLonToVector3(lat, lon, radius) {
