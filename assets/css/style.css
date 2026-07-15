@@ -21,6 +21,21 @@ html {
     min-height: 100%;
 }
 
+/* Rotating Globe Background */
+#globe-container {
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    z-index: -1;
+    pointer-events: none;
+}
+
+#globe-container canvas {
+    display: block;
+}
+
 body {
     font-family: 'Monaco', 'Menlo', 'Courier New', 'Consolas', monospace;
     line-height: 1.6;
