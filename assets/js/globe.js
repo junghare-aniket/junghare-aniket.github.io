@@ -7,8 +7,10 @@
 
     const ACCENT_COLOR = 0x4ec9b0;
     const GLOBE_RADIUS = 3;
-    const MAX_ARCS = 12;
-    const ARC_SPAWN_INTERVAL = 450; // ms
+    const MAX_ARCS = 18;
+    const ARC_SPAWN_INTERVAL = 300; // ms
+    const NODE_IDLE_OPACITY = 0.2;
+    const NODE_ACTIVE_OPACITY = 0.95;
 
     // Roughly-global spread of "city" nodes, as [lat, lon]
     const NODE_COORDS = [
@@ -130,11 +132,16 @@
     });
     globeGroup.add(new THREE.Mesh(atmosphereGeometry, atmosphereMaterial));
 
-    // Glowing city nodes
+    // City nodes - dim/small by default, only lighting up while an arc is connected to them
     const nodePositions = NODE_COORDS.map(([lat, lon]) => latLonToVector3(lat, lon, GLOBE_RADIUS * 1.01));
+    const nodeActiveCount = new Array(nodePositions.length).fill(0);
     const nodeMeshes = nodePositions.map((pos, i) => {
-        const nodeGeometry = new THREE.SphereGeometry(0.045, 8, 8);
-        const nodeMaterial = new THREE.MeshBasicMaterial({ color: ACCENT_COLOR });
+        const nodeGeometry = new THREE.SphereGeometry(0.022, 8, 8);
+        const nodeMaterial = new THREE.MeshBasicMaterial({
+            color: ACCENT_COLOR,
+            transparent: true,
+            opacity: NODE_IDLE_OPACITY
+        });
         const node = new THREE.Mesh(nodeGeometry, nodeMaterial);
         node.position.copy(pos);
         node.userData.pulseOffset = i * 0.7;
@@ -163,16 +170,22 @@
 
         const geometry = new THREE.BufferGeometry().setFromPoints(points);
         const material = new THREE.LineBasicMaterial({
-            color: ACCENT_COLOR,
+            color: ACCENT_COLOR, // same accent hue for every arc - only brightness varies
             transparent: true,
             opacity: 0
         });
         const line = new THREE.Line(geometry, material);
         globeGroup.add(line);
 
+        nodeActiveCount[i]++;
+        nodeActiveCount[j]++;
+
         activeArcs.push({
             line,
             material,
+            nodeA: i,
+            nodeB: j,
+            peakOpacity: 0.4 + Math.random() * 0.5, // random brightness per arc, same color
             startTime: performance.now(),
             lifetime: 3200 + Math.random() * 1600
         });
@@ -187,10 +200,12 @@
                 globeGroup.remove(arc.line);
                 arc.line.geometry.dispose();
                 arc.material.dispose();
+                nodeActiveCount[arc.nodeA]--;
+                nodeActiveCount[arc.nodeB]--;
                 activeArcs.splice(i, 1);
                 continue;
             }
-            arc.material.opacity = Math.sin(Math.PI * t) * 0.85;
+            arc.material.opacity = Math.sin(Math.PI * t) * arc.peakOpacity;
         }
     }
 
@@ -272,12 +287,18 @@
             globeGroup.rotation.y += AUTO_ROTATE_SPEED;
         }
 
-        nodeMeshes.forEach(node => {
-            const scale = 1 + 0.35 * Math.sin(now * 0.0025 + node.userData.pulseOffset);
+        updateArcs(now); // updates nodeActiveCount before nodes read it below
+
+        nodeMeshes.forEach((node, i) => {
+            const isActive = nodeActiveCount[i] > 0;
+            const targetOpacity = isActive ? NODE_ACTIVE_OPACITY : NODE_IDLE_OPACITY;
+            node.material.opacity += (targetOpacity - node.material.opacity) * 0.08;
+
+            const scale = isActive
+                ? 1 + 0.35 * Math.sin(now * 0.0025 + node.userData.pulseOffset)
+                : 1;
             node.scale.setScalar(scale);
         });
-
-        updateArcs(now);
         renderer.render(scene, camera);
     }
     animate();
