@@ -329,36 +329,6 @@
         });
     }
 
-    // Builds a great-circle arc between two surface points that starts and ends
-    // exactly at their real radius (so it visually touches the city dots, not a
-    // point hovering above them), only rising in a bulge through the middle.
-    // A quadratic bezier through an elevated midpoint (the old approach) shoots
-    // toward that midpoint immediately from t=0, which is why arcs looked like
-    // they lifted off from above the city rather than leaving from its surface.
-    function greatCircleArcPoints(p1, p2, bulge, segments) {
-        const baseRadius = p1.length();
-        const angle = p1.angleTo(p2);
-        const sinAngle = Math.sin(angle);
-        const dir1 = p1.clone().normalize();
-        const dir2 = p2.clone().normalize();
-        const points = [];
-
-        for (let s = 0; s <= segments; s++) {
-            const t = s / segments;
-            let dir;
-            if (sinAngle < 1e-6) {
-                dir = dir1;
-            } else {
-                const a = Math.sin((1 - t) * angle) / sinAngle;
-                const b = Math.sin(t * angle) / sinAngle;
-                dir = dir1.clone().multiplyScalar(a).add(dir2.clone().multiplyScalar(b));
-            }
-            const radiusAtT = baseRadius + bulge * Math.sin(Math.PI * t);
-            points.push(dir.multiplyScalar(radiusAtT));
-        }
-        return points;
-    }
-
     // Pulsing arcs animated between random node pairs
     const activeArcs = [];
 
@@ -374,7 +344,9 @@
         const angle = p1.angleTo(p2);
         const bulge = GLOBE_RADIUS * (0.3 + (angle / Math.PI) * 0.6);
 
-        const points = greatCircleArcPoints(p1, p2, bulge, 48);
+        const mid = p1.clone().add(p2).multiplyScalar(0.5).normalize().multiplyScalar(GLOBE_RADIUS + bulge);
+        const curve = new THREE.QuadraticBezierCurve3(p1, mid, p2);
+        const points = curve.getPoints(48);
 
         const geometry = new THREE.BufferGeometry().setFromPoints(points);
         const material = new THREE.LineBasicMaterial({
