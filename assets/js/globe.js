@@ -92,6 +92,20 @@
         );
     }
 
+    // The Y rotation that brings a given lat/lon to face the camera head-on
+    // (i.e. onto the sphere's +Z point), using the same convention as latLonToVector3.
+    function facingRotationY(lat, lon) {
+        const phi = (90 - lat) * (Math.PI / 180);
+        const theta = (lon + 180) * (Math.PI / 180);
+        const x = -Math.sin(phi) * Math.cos(theta);
+        const z = Math.sin(phi) * Math.sin(theta);
+        return -Math.atan2(x, z);
+    }
+
+    // Approximate geographic center of India (near Nagpur) - the globe starts facing here
+    const INDIA_LAT = 21.15;
+    const INDIA_LON = 79.09;
+
     const scene = new THREE.Scene();
 
     const camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000);
@@ -113,6 +127,7 @@
 
     // Everything below rotates together as one unit
     const globeGroup = new THREE.Group();
+    globeGroup.rotation.y = facingRotationY(INDIA_LAT, INDIA_LON);
     scene.add(globeGroup);
 
     // Solid dark core with a faint world-map overlay so nodes/arcs read clearly against it
