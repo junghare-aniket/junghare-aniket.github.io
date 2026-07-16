@@ -323,7 +323,10 @@
             const direction = new THREE.Vector3().subVectors(nodeWorldPos, satWorldPos);
             const length = direction.length();
 
-            sat.beamMesh.position.copy(satWorldPos).add(nodeWorldPos).multiplyScalar(0.5);
+            // satWorldPos/nodeWorldPos are true world-space (already include scene.position's
+            // bottom-anchor offset), but beamMesh.position is interpreted relative to its
+            // parent (scene) - subtract that offset once so it isn't double-applied.
+            sat.beamMesh.position.copy(satWorldPos).add(nodeWorldPos).multiplyScalar(0.5).sub(scene.position);
             sat.beamMesh.quaternion.setFromUnitVectors(_upAxis, direction.normalize());
             sat.beamMesh.scale.set(1, length, 1);
         });
