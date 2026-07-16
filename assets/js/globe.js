@@ -7,8 +7,8 @@
 
     const ACCENT_COLOR = 0x4ec9b0;
     const GLOBE_RADIUS = 7;
-    const MAX_ARCS = 18;
-    const ARC_SPAWN_INTERVAL = 300; // ms
+    const MAX_ARCS = 10;
+    const ARC_SPAWN_INTERVAL = 600; // ms
     const NODE_IDLE_OPACITY = 0.2;
     const NODE_ACTIVE_OPACITY = 0.95;
 
