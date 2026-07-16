@@ -6,7 +6,7 @@
     if (!container || typeof THREE === 'undefined') return;
 
     const ACCENT_COLOR = 0x4ec9b0;
-    const GLOBE_RADIUS = 3;
+    const GLOBE_RADIUS = 6;
     const MAX_ARCS = 18;
     const ARC_SPAWN_INTERVAL = 300; // ms
     const NODE_IDLE_OPACITY = 0.2;
