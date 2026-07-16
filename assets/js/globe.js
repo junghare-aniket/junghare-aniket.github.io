@@ -131,7 +131,7 @@
     // Extra forward tilt so India's full latitude span (~8N to 37N) clears the
     // bottom-edge cutoff, not just the northern half - without this, the globe's
     // own equatorial plane sits below the visible area and cuts off the south.
-    globeGroup.rotation.x = THREE.MathUtils.degToRad(-22);
+    globeGroup.rotation.x = THREE.MathUtils.degToRad(-30);
     scene.add(globeGroup);
 
     // Solid dark core with a faint world-map overlay so nodes/arcs read clearly against it
