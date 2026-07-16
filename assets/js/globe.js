@@ -98,6 +98,13 @@
     camera.position.set(0, 0, 13);
     camera.lookAt(0, 0, 0);
 
+    // Anchor the whole assembly near the bottom of the viewport so only the globe's
+    // upper hemisphere pokes into view, like a horizon/sunrise effect. The frustum's
+    // vertical half-extent at a given depth depends only on vertical FOV + distance
+    // (not aspect ratio), so this constant offset holds at any window size.
+    const VERTICAL_OFFSET = camera.position.z * Math.tan(THREE.MathUtils.degToRad(camera.fov / 2));
+    scene.position.y = -VERTICAL_OFFSET;
+
     const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
     renderer.setSize(window.innerWidth, window.innerHeight);
@@ -366,8 +373,13 @@
         const pJSDom = window.pJSDom;
         if (!pJSDom || !pJSDom[0] || !pJSDom[0].pJS) return;
         const pJS = pJSDom[0].pJS;
-        const cx = window.innerWidth / 2;
-        const cy = window.innerHeight / 2;
+
+        // Project the globe's actual on-screen position (it's anchored near the
+        // bottom of the viewport now, not the center) so the ripple originates
+        // from where the globe really is rather than the middle of the screen.
+        const globeScreenPos = globeGroup.getWorldPosition(_tmpVecA).clone().project(camera);
+        const cx = (globeScreenPos.x * 0.5 + 0.5) * window.innerWidth;
+        const cy = (1 - (globeScreenPos.y * 0.5 + 0.5)) * window.innerHeight;
 
         pJS.particles.array.forEach((p) => {
             const dx = p.x - cx;
