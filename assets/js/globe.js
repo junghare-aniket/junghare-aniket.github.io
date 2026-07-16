@@ -275,7 +275,7 @@
     // WebGL caps line thickness at ~1px regardless of linewidth - a real mesh is
     // what actually stays visible. Re-targets automatically as the satellite orbits
     // and the globe rotates, so the connection never has to restart from scratch.
-    const BEAM_RADIUS = 0.018;
+    const BEAM_RADIUS = GLOBE_RADIUS * 0.008; // scales with globe size so it can't go paper-thin again
     const _tmpVecA = new THREE.Vector3();
     const _tmpVecB = new THREE.Vector3();
     const _upAxis = new THREE.Vector3(0, 1, 0);
