@@ -103,7 +103,8 @@
     // vertical half-extent at a given depth depends only on vertical FOV + distance
     // (not aspect ratio), so this constant offset holds at any window size.
     const VERTICAL_OFFSET = camera.position.z * Math.tan(THREE.MathUtils.degToRad(camera.fov / 2));
-    scene.position.y = -VERTICAL_OFFSET;
+    const EXTRA_DROP = 1.8; // nudges it further down than the exact half-visible point
+    scene.position.y = -(VERTICAL_OFFSET + EXTRA_DROP);
 
     const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
