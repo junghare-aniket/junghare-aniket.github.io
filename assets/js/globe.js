@@ -201,6 +201,7 @@
     // dish antenna - real satellites read as recognizable mainly through the
     // bright-body/dark-panel contrast, not fine geometric detail at this scale.
     const SOLAR_PANEL_COLOR = 0x16232e; // dark, contrasts against the bright amber body/antenna
+    const SATELLITE_SCALE = 2; // uniform size multiplier for the whole satellite model
 
     function createSatelliteMesh() {
         const group = new THREE.Group();
@@ -244,6 +245,7 @@
         dish.position.set(0, 0.06, 0);
         group.add(dish);
 
+        group.scale.setScalar(SATELLITE_SCALE);
         return group;
     }
 
