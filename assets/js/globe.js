@@ -440,6 +440,40 @@
         });
     }
 
+    // Continuously push nearby background particles away from each satellite's
+    // current on-screen position, like the mouse-hover repulse effect but
+    // following the satellites instead. Runs every frame (not event-triggered)
+    // since it's a standing "field" around each satellite, not a one-off pulse.
+    const SATELLITE_REPEL_RADIUS = 70; // px
+    const SATELLITE_REPEL_STRENGTH = 6; // max px nudge per frame at closest range
+
+    function repelParticlesFromSatellites() {
+        const pJSDom = window.pJSDom;
+        if (!pJSDom || !pJSDom[0] || !pJSDom[0].pJS) return;
+        const pJS = pJSDom[0].pJS;
+
+        const satScreenPositions = satellites.map((sat) => {
+            const worldPos = sat.satMesh.getWorldPosition(_tmpVecA).clone().project(camera);
+            return {
+                x: (worldPos.x * 0.5 + 0.5) * window.innerWidth,
+                y: (1 - (worldPos.y * 0.5 + 0.5)) * window.innerHeight
+            };
+        });
+
+        pJS.particles.array.forEach((p) => {
+            satScreenPositions.forEach((satPos) => {
+                const dx = p.x - satPos.x;
+                const dy = p.y - satPos.y;
+                const dist = Math.sqrt(dx * dx + dy * dy);
+                if (dist > 0 && dist < SATELLITE_REPEL_RADIUS) {
+                    const force = (1 - dist / SATELLITE_REPEL_RADIUS) * SATELLITE_REPEL_STRENGTH;
+                    p.x += (dx / dist) * force;
+                    p.y += (dy / dist) * force;
+                }
+            });
+        });
+    }
+
     function updateArcs(now) {
         for (let i = activeArcs.length - 1; i >= 0; i--) {
             const arc = activeArcs[i];
@@ -554,6 +588,7 @@
         });
 
         updateParticleRipples(now);
+        repelParticlesFromSatellites();
         renderer.render(scene, camera);
     }
     animate();
