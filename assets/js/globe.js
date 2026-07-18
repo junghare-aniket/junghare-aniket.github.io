@@ -196,36 +196,53 @@
     });
     globeGroup.add(new THREE.Mesh(atmosphereGeometry, atmosphereMaterial));
 
-    // Builds a small stylized satellite: a body "bus" with two solar-panel wings
-    // and a short antenna, instead of an abstract glowing sphere.
+    // Builds a small stylized satellite: an elongated body "bus", two dark
+    // solar-panel wings with a cell-grid overlay for contrast, and a small
+    // dish antenna - real satellites read as recognizable mainly through the
+    // bright-body/dark-panel contrast, not fine geometric detail at this scale.
+    const SOLAR_PANEL_COLOR = 0x16232e; // dark, contrasts against the bright amber body/antenna
+
     function createSatelliteMesh() {
         const group = new THREE.Group();
         const bodyMaterial = new THREE.MeshBasicMaterial({ color: SATELLITE_COLOR });
-        const panelMaterial = new THREE.MeshBasicMaterial({
+        const panelMaterial = new THREE.MeshBasicMaterial({ color: SOLAR_PANEL_COLOR, side: THREE.DoubleSide });
+        const panelGridMaterial = new THREE.LineBasicMaterial({
             color: SATELLITE_COLOR,
             transparent: true,
-            opacity: 0.75,
-            side: THREE.DoubleSide
+            opacity: 0.5
         });
 
-        const body = new THREE.Mesh(new THREE.BoxGeometry(0.05, 0.05, 0.05), bodyMaterial);
+        // Elongated bus rather than a plain cube - closer to real satellite proportions
+        const body = new THREE.Mesh(new THREE.BoxGeometry(0.045, 0.065, 0.045), bodyMaterial);
         group.add(body);
 
-        const panelGeometry = new THREE.BoxGeometry(0.1, 0.003, 0.045);
-        const panelLeft = new THREE.Mesh(panelGeometry, panelMaterial);
-        panelLeft.position.set(-0.09, 0, 0);
-        group.add(panelLeft);
+        // Solar panel wings, each with a thin cell-grid line overlay for detail
+        const panelGeometry = new THREE.BoxGeometry(0.11, 0.003, 0.05);
+        const panelGridGeometry = new THREE.EdgesGeometry(panelGeometry);
+        [-1, 1].forEach((side) => {
+            const panel = new THREE.Mesh(panelGeometry, panelMaterial);
+            panel.position.set(side * 0.095, 0, 0);
+            group.add(panel);
 
-        const panelRight = new THREE.Mesh(panelGeometry, panelMaterial);
-        panelRight.position.set(0.09, 0, 0);
-        group.add(panelRight);
+            const grid = new THREE.LineSegments(panelGridGeometry, panelGridMaterial);
+            grid.position.copy(panel.position);
+            group.add(grid);
+        });
 
-        const antenna = new THREE.Mesh(
-            new THREE.CylinderGeometry(0.002, 0.002, 0.045, 4),
+        // Small dish antenna on a short mast, instead of a plain rod
+        const mast = new THREE.Mesh(
+            new THREE.CylinderGeometry(0.0015, 0.0015, 0.025, 4),
             bodyMaterial
         );
-        antenna.position.set(0, 0.045, 0);
-        group.add(antenna);
+        mast.position.set(0, 0.045, 0);
+        group.add(mast);
+
+        const dish = new THREE.Mesh(
+            new THREE.ConeGeometry(0.018, 0.012, 10, 1, true),
+            bodyMaterial
+        );
+        dish.position.set(0, 0.06, 0);
+        group.add(dish);
 
         return group;
     }
@@ -595,6 +612,10 @@
 
         satellites.forEach((sat) => {
             sat.motionPivot.rotation.y += sat.speed;
+            // Counter-rotate the satellite itself so it doesn't tumble as it
+            // orbits - the wings/body keep a fixed orientation relative to the
+            // orbital plane instead of spinning through every position.
+            sat.satMesh.rotation.y = -sat.motionPivot.rotation.y;
         });
 
         updateArcs(now); // updates nodeActiveCount before nodes read it below
