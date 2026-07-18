@@ -6,6 +6,7 @@
     if (!container || typeof THREE === 'undefined') return;
 
     const ACCENT_COLOR = 0x4ec9b0;
+    const SATELLITE_COLOR = 0xf0a94e; // warm amber for the orbital layer (satellites, orbit rings, downlink beams)
     const GLOBE_RADIUS = 7;
     const MAX_ARCS = 10;
     const ARC_SPAWN_INTERVAL = 600; // ms
@@ -219,7 +220,7 @@
             ));
         }
         const ringMaterial = new THREE.LineBasicMaterial({
-            color: ACCENT_COLOR,
+            color: SATELLITE_COLOR,
             transparent: true,
             opacity: 0.35
         });
@@ -230,14 +231,14 @@
         motionPivot.rotation.y = Math.random() * Math.PI * 2;
         planePivot.add(motionPivot);
 
-        const satMaterial = new THREE.MeshBasicMaterial({ color: ACCENT_COLOR });
+        const satMaterial = new THREE.MeshBasicMaterial({ color: SATELLITE_COLOR });
         const satMesh = new THREE.Mesh(new THREE.SphereGeometry(0.035, 8, 8), satMaterial);
         satMesh.position.set(SATELLITE_ORBIT_RADIUS, 0, 0);
         motionPivot.add(satMesh);
 
         // Small glow halo so satellites read as distinct, always-on points of light
         const glowMaterial = new THREE.MeshBasicMaterial({
-            color: ACCENT_COLOR,
+            color: SATELLITE_COLOR,
             transparent: true,
             opacity: 0.35,
             blending: THREE.AdditiveBlending
@@ -285,7 +286,7 @@
         // updateDownlinkBeams so it can keep tracking both moving endpoints.
         const geometry = new THREE.CylinderGeometry(BEAM_RADIUS, BEAM_RADIUS, 1, 6, 1, true);
         const material = new THREE.MeshBasicMaterial({
-            color: ACCENT_COLOR,
+            color: SATELLITE_COLOR,
             transparent: true,
             opacity: 0.55
         });
