@@ -221,7 +221,7 @@
         const ringMaterial = new THREE.LineBasicMaterial({
             color: ACCENT_COLOR,
             transparent: true,
-            opacity: 0.1
+            opacity: 0.35
         });
         planePivot.add(new THREE.LineLoop(new THREE.BufferGeometry().setFromPoints(ringPoints), ringMaterial));
 
