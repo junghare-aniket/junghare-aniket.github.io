@@ -188,7 +188,7 @@
     // Subtle outer atmosphere glow matching the site's accent color - thinner
     // shell and lower opacity than before, since at the globe's current larger
     // size this was reading as a distracting green ring rather than a subtle rim.
-    const atmosphereGeometry = new THREE.SphereGeometry(GLOBE_RADIUS * 1.006, 48, 48);
+    const atmosphereGeometry = new THREE.SphereGeometry(GLOBE_RADIUS * 1.015, 48, 48);
     const atmosphereMaterial = new THREE.MeshBasicMaterial({
         color: ACCENT_COLOR,
         transparent: true,
