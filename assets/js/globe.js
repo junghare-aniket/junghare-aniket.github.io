@@ -196,6 +196,40 @@
     });
     globeGroup.add(new THREE.Mesh(atmosphereGeometry, atmosphereMaterial));
 
+    // Builds a small stylized satellite: a body "bus" with two solar-panel wings
+    // and a short antenna, instead of an abstract glowing sphere.
+    function createSatelliteMesh() {
+        const group = new THREE.Group();
+        const bodyMaterial = new THREE.MeshBasicMaterial({ color: SATELLITE_COLOR });
+        const panelMaterial = new THREE.MeshBasicMaterial({
+            color: SATELLITE_COLOR,
+            transparent: true,
+            opacity: 0.75,
+            side: THREE.DoubleSide
+        });
+
+        const body = new THREE.Mesh(new THREE.BoxGeometry(0.05, 0.05, 0.05), bodyMaterial);
+        group.add(body);
+
+        const panelGeometry = new THREE.BoxGeometry(0.1, 0.003, 0.045);
+        const panelLeft = new THREE.Mesh(panelGeometry, panelMaterial);
+        panelLeft.position.set(-0.09, 0, 0);
+        group.add(panelLeft);
+
+        const panelRight = new THREE.Mesh(panelGeometry, panelMaterial);
+        panelRight.position.set(0.09, 0, 0);
+        group.add(panelRight);
+
+        const antenna = new THREE.Mesh(
+            new THREE.CylinderGeometry(0.002, 0.002, 0.045, 4),
+            bodyMaterial
+        );
+        antenna.position.set(0, 0.045, 0);
+        group.add(antenna);
+
+        return group;
+    }
+
     // Orbiting satellites - added to the scene (not globeGroup) so they keep orbiting
     // independently of the globe's own spin, like real satellites over a rotating Earth.
     const SATELLITE_COUNT = 6;
@@ -231,20 +265,9 @@
         motionPivot.rotation.y = Math.random() * Math.PI * 2;
         planePivot.add(motionPivot);
 
-        const satMaterial = new THREE.MeshBasicMaterial({ color: SATELLITE_COLOR });
-        const satMesh = new THREE.Mesh(new THREE.SphereGeometry(0.035, 8, 8), satMaterial);
+        const satMesh = createSatelliteMesh();
         satMesh.position.set(SATELLITE_ORBIT_RADIUS, 0, 0);
         motionPivot.add(satMesh);
-
-        // Small glow halo so satellites read as distinct, always-on points of light
-        const glowMaterial = new THREE.MeshBasicMaterial({
-            color: SATELLITE_COLOR,
-            transparent: true,
-            opacity: 0.35,
-            blending: THREE.AdditiveBlending
-        });
-        const glowMesh = new THREE.Mesh(new THREE.SphereGeometry(0.075, 8, 8), glowMaterial);
-        satMesh.add(glowMesh);
 
         satellites.push({
             motionPivot,
