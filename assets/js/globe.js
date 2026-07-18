@@ -7,7 +7,7 @@
 
     const ACCENT_COLOR = 0x4ec9b0;
     const SATELLITE_COLOR = 0xf0a94e; // warm amber for the orbital layer (satellites, orbit rings, downlink beams)
-    const GLOBE_RADIUS = 8;
+    const GLOBE_RADIUS = 7;
     const MAX_ARCS = 10;
     const ARC_SPAWN_INTERVAL = 600; // ms
     const NODE_IDLE_OPACITY = 0.2;
@@ -185,12 +185,14 @@
         globeGroup.add(line);
     }
 
-    // Subtle outer atmosphere glow matching the site's accent color
-    const atmosphereGeometry = new THREE.SphereGeometry(GLOBE_RADIUS * 1.05, 48, 48);
+    // Subtle outer atmosphere glow matching the site's accent color - thinner
+    // shell and lower opacity than before, since at the globe's current larger
+    // size this was reading as a distracting green ring rather than a subtle rim.
+    const atmosphereGeometry = new THREE.SphereGeometry(GLOBE_RADIUS * 1.006, 48, 48);
     const atmosphereMaterial = new THREE.MeshBasicMaterial({
         color: ACCENT_COLOR,
         transparent: true,
-        opacity: 0.12,
+        opacity: 0.05,
         side: THREE.BackSide,
         blending: THREE.AdditiveBlending
     });
