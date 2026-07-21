@@ -7,7 +7,7 @@
 
     const ACCENT_COLOR = 0x4ec9b0;
     const SATELLITE_COLOR = 0xf0a94e; // warm amber for the orbital layer (satellites, orbit rings, downlink beams)
-    const GLOBE_RADIUS = 11;
+    const GLOBE_RADIUS = 8;
     const MAX_ARCS = 10;
     const ARC_SPAWN_INTERVAL = 600; // ms
     const NODE_IDLE_OPACITY = 0.2;
