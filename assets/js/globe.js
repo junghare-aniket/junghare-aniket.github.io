@@ -232,20 +232,6 @@
             group.add(grid);
         });
 
-        // Dish antenna on a mast, instead of a plain rod
-        const mast = new THREE.Mesh(
-            new THREE.CylinderGeometry(0.003, 0.003, 0.04, 4),
-            bodyMaterial
-        );
-        mast.position.set(0, 0.0525, 0);
-        group.add(mast);
-
-        const dish = new THREE.Mesh(
-            new THREE.ConeGeometry(0.03, 0.02, 10, 1, true),
-            bodyMaterial
-        );
-        dish.position.set(0, 0.075, 0);
-        group.add(dish);
 
         group.scale.setScalar(SATELLITE_SCALE);
         return group;
