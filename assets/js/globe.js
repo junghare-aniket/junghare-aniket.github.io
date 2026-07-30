@@ -264,23 +264,6 @@
         planePivot.rotation.z = Math.random() * Math.PI * 2;
         scene.add(planePivot);
 
-        // Faint static ring tracing the orbit path
-        const ringPoints = [];
-        for (let k = 0; k <= 64; k++) {
-            const a = (k / 64) * Math.PI * 2;
-            ringPoints.push(new THREE.Vector3(
-                SATELLITE_ORBIT_RADIUS * Math.cos(a),
-                0,
-                SATELLITE_ORBIT_RADIUS * Math.sin(a)
-            ));
-        }
-        const ringMaterial = new THREE.LineBasicMaterial({
-            color: SATELLITE_COLOR,
-            transparent: true,
-            opacity: 0.35
-        });
-        planePivot.add(new THREE.LineLoop(new THREE.BufferGeometry().setFromPoints(ringPoints), ringMaterial));
-
         // Rotating pivot that carries the satellite around the (fixed) orbital plane
         const motionPivot = new THREE.Object3D();
         motionPivot.rotation.y = Math.random() * Math.PI * 2;
