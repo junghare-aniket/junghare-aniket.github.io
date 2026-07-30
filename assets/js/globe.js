@@ -253,7 +253,7 @@
 
     // Orbiting satellites - added to the scene (not globeGroup) so they keep orbiting
     // independently of the globe's own spin, like real satellites over a rotating Earth.
-    const SATELLITE_COUNT = 6;
+    const SATELLITE_COUNT = 3;
     const SATELLITE_ORBIT_RADIUS = GLOBE_RADIUS * 1.4;
     const satellites = [];
 
