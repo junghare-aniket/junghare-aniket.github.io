@@ -262,7 +262,7 @@
         satellites.push({
             motionPivot,
             satMesh,
-            speed: (0.0025 + Math.random() * 0.0035) * (Math.random() < 0.5 ? 1 : -1)
+            speed: (0.0015 + Math.random() * 0.002) * (Math.random() < 0.5 ? 1 : -1)
         });
     }
 
