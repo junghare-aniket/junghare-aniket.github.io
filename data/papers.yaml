@@ -1,1 +1,19 @@
+- key: anikettmlr1
+  type: misc
+  title: "TMLR tmr tmlr tmr tmlr tmr tmlr tmr tmlr tmr tmlr tmr tmlr tmr tmlr tmr tmlr tmr tmlr tmr tmlr tmr tmlr tmr tmlr tmr tmlr tmr tmlr tmr tmlr tmr tmlr "
+  author: "Junghare Aniket and Banerjee Biplab"
+  year: "2025"
+  primaryClass: cs.LG
+  url: "https://jmlr.org/tmlr/"
+  html: "https://jmlr.org/tmlr/"
+  selected: true
+  additional_info: "TMLR"
 
+- key: aniketneurips1
+  type: inproceedings
+  title: "Neurips Neurips Neurips Neurips Neurips Neurips Neurips Neurips Neurips Neurips Neurips Neurips Neurips Neurips Neurips Neurips"
+  author: "Junghare Aniket and Banerjee Biplab"
+  year: "2026"
+  additional_info: "Neurips"
+  selected: true
+  html: "https://neurips.cc/"
