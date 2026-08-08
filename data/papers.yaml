@@ -5,4 +5,13 @@
   year: "2026"
   additional_info: "British Machine Vision Conference 2026"
   selected: true
-  html: ""
+
+- key: aniketprl1
+  type: journal
+  title: "UA-JEPA: Uncertainty-Aware Joint-Embedding Predictive Learning for Remote Sensing Image Retrieval"
+  author: "Junghare Aniket and Banerjee Biplab"
+  year: "2026"
+  additional_info: "Pattern Recognition Letters"
+  primaryClass: cs.LG
+  selected: true
+  
