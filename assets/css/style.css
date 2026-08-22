@@ -432,6 +432,16 @@ body {
     font-weight: bold;
 }
 
+.publication-additional a {
+    text-decoration: none;
+    transition: opacity 0.2s;
+}
+
+.publication-additional a:hover {
+    text-decoration: underline;
+    opacity: 0.8;
+}
+
 .highlight-badge {
     display: inline-block;
     padding: 0.2rem 0.6rem;
