@@ -41,7 +41,7 @@ body.dragging-globe {
 
 body {
     font-family: 'Share Tech Mono', 'Consolas', 'Lucida Console', 'Monaco', 'Menlo', 'Courier New', monospace;
-    font-size: 18px;
+    font-size: 17px;
     line-height: 1.6;
     color: #d4d4d4;
     background-color: transparent !important;
@@ -210,7 +210,6 @@ body {
     align-items: center;
     gap: 0.5rem;
     color: #d4d4d4;
-    font-size: 1rem;
 }
 
 .info-item i {
@@ -313,7 +312,6 @@ body {
 
 .news-date {
     color: #858585;
-    font-size: 0.9rem;
     font-weight: 500;
 }
 
@@ -371,7 +369,6 @@ body {
 }
 
 .publication-title {
-    font-size: 1.1rem;
     font-weight: 600;
     margin-bottom: 0.5rem;
     color: #ffffff;
@@ -389,7 +386,6 @@ body {
 
 .publication-authors {
     color: #d4d4d4;
-    font-size: 0.95rem;
     margin-bottom: 0.5rem;
 }
 
@@ -400,7 +396,6 @@ body {
 
 .publication-meta {
     color: #858585;
-    font-size: 0.9rem;
     margin-bottom: 0.5rem;
 }
 
@@ -411,7 +406,6 @@ body {
 .publication-links a {
     text-decoration: none;
     margin-right: 1rem;
-    font-size: 0.9rem;
     transition: opacity 0.2s;
     color: #4ec9b0;
 }
@@ -424,7 +418,6 @@ body {
 .publication-additional {
     margin-top: 0.5rem;
     color: #858585;
-    font-size: 0.9rem;
     font-style: italic;
 }
 
@@ -451,7 +444,6 @@ body {
     border: 1px solid #3e3e3e;
     border-radius: 4px;
     color: #d4d4d4;
-    font-size: 0.85rem;
     font-weight: normal;
     font-style: normal;
 }
@@ -494,7 +486,6 @@ body {
 
 .cv-timetable-title {
     font-weight: 600;
-    font-size: 1.1rem;
     margin-bottom: 0.3rem;
     color: #ffffff;
 }
@@ -506,7 +497,6 @@ body {
 
 .cv-timetable-year {
     color: #858585;
-    font-size: 0.9rem;
     margin-bottom: 0.5rem;
 }
 
@@ -550,7 +540,6 @@ body {
     justify-content: space-between;
     align-items: center;
     color: #858585;
-    font-size: 0.9rem;
 }
 
 .footer-links {
