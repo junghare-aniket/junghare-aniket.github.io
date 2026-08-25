@@ -57,7 +57,8 @@ async function renderAboutGeneralInfo() {
         const iconMap = {
             'email': 'fa-solid fa-envelope',
             'linkedin': 'fa-brands fa-linkedin',
-            'google scholar': 'fa-solid fa-graduation-cap'            
+            'google scholar': 'fa-solid fa-graduation-cap',
+            'x': 'fa-brands fa-x-twitter'
         };
 
         container.innerHTML = generalSection.contents.map(item => {
@@ -71,6 +72,8 @@ async function renderAboutGeneralInfo() {
                 return `<div class="info-item"><a href="${item.value}" target="_blank" rel="noopener noreferrer" class="social-icon" title="LinkedIn Profile"><i class="${icon}"></i></a></div>`;
             } else if (key === 'google scholar') {
                 return `<div class="info-item"><a href="${item.value}" target="_blank" rel="noopener noreferrer" class="social-icon" title="Google Scholar Profile"><i class="${icon}"></i></a></div>`;
+            } else if (key === 'x') {
+                return `<div class="info-item"><a href="${item.value}" target="_blank" rel="noopener noreferrer" class="social-icon" title="X Profile"><i class="${icon}"></i></a></div>`;
             } else {
                 const mapsUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(item.value)}`;
                 return `<div class="info-item"><i class="${icon}"></i><a href="${mapsUrl}" target="_blank" rel="noopener noreferrer">${item.value}</a></div>`;
