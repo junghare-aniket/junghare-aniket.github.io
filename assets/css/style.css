@@ -41,6 +41,7 @@ body.dragging-globe {
 
 body {
     font-family: 'Share Tech Mono', 'Consolas', 'Lucida Console', 'Monaco', 'Menlo', 'Courier New', monospace;
+    font-size: 17px;
     line-height: 1.6;
     color: #d4d4d4;
     background-color: transparent !important;
